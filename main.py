@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import easyocr
 
 # Constants.
 INPUT_WIDTH = 640
@@ -133,7 +134,9 @@ while True:
     # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
     t, _ = net.getPerfProfile()
     label = 'FPS: %.2f' % (1000/(t * 1000.0 / cv2.getTickFrequency()))
-    print(label)
+    reader = easyocr.Reader(['en'], gpu=True)
+    result = reader.readtext("ocr.jpg", detail=0)
+    print(result)
     cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE, RED, THICKNESS, cv2.LINE_AA)
     cv2.imshow('Output', img)
     cv2.waitKey(5)
