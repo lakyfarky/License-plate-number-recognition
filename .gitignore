@@ -132,3 +132,4 @@ dmypy.json
 # additional
 weights/
 config/
+yolov5.sh/
