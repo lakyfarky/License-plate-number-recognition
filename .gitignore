@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+yolov5_ocr/
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +128,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# additional
+weights/
+config/
+yolov5.sh
