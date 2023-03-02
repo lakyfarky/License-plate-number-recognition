@@ -132,5 +132,6 @@ dmypy.json
 # additional
 weights/
 config/
-yolov5.sh
-yolov5_ocr/
+ocr.sh
+ocr/
+data/

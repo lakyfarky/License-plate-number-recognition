@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import easyocr
+import time
 
 # Constants.
 INPUT_WIDTH = 640
@@ -109,13 +110,12 @@ def post_process(input_image, outputs):
         width = box[2]
         height = box[3]
         license_plate = input_image[top:top+height, left:left+width]
-        # cv2.imshow("das", license_plate)
-        # cv2.waitKey(0)
+
         # recognize characters from the license plate image
         characters = recognize_characters(license_plate)
         cv2.putText(input_image, characters, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         cv2.rectangle(input_image, (left, top), (left + width, top + height), BLUE, 3*THICKNESS)
-        # label = "{}:{:.2f}".format(classes[class_ids[i]], confidences[i])
+        #label = "{}:{:.2f}".format(classes[class_ids[i]], confidences[i])
         #draw_label(input_image, label, left, top)
     return input_image
 
@@ -123,7 +123,7 @@ def load_capture(source=0):
     capture = cv2.VideoCapture(source)
     return capture
 
-capture=load_capture("ocr.jpg")
+capture=load_capture("data/Number Plate detection on Recorded Video.mp4")
 
 classesFile = "config\lp_v2.txt"
 classes = None
@@ -156,22 +156,26 @@ def recognize_characters(image):
         
     return str(result)
 
-
+frame = 0
 while True:
-
+    frame+=1
     _, frame = capture.read()
     if frame is None:
         print("End of stream")
         break
-
+    
+    start = time.time()
     detections = pre_process(frame, net)
     img = post_process(frame.copy(), detections)
+    end = time.time()
+    total = end-start
     # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
     t, _ = net.getPerfProfile()
     label = 'FPS: %.2f' % (1000/(t * 1000.0 / cv2.getTickFrequency()))
+    
     cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE, RED, THICKNESS, cv2.LINE_AA)
     cv2.imshow('Output', img)
-    cv2.waitKey(0)
+    cv2.waitKey(5)
 
     # ESC for break
     if cv2.waitKey(1) > -1:
