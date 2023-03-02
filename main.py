@@ -20,6 +20,10 @@ BLUE   = (255,178,50)
 YELLOW = (0,255,255)
 RED = (0,0,255)
 
+# OCR
+reader = easyocr.Reader(['en'], gpu=True)
+print("OCR loaded")
+
 def load_model():
     classesFile = "config/coco_classes.txt"
     classes = None
@@ -42,8 +46,8 @@ def draw_label(input_image, label, left, top):
 
 def pre_process(input_image, net):
     # Create a 4D blob from a frame.
-    #blob = cv2.dnn.blobFromImage(input_image, 1/255, (INPUT_WIDTH, INPUT_HEIGHT), [0,0,0], 1, crop=False)
-    blob = cv2.dnn.blobFromImage(input_image, 1/255.0, (640, 640), swapRB=True)
+    blob = cv2.dnn.blobFromImage(input_image, 1/255, (INPUT_WIDTH, INPUT_HEIGHT), [0,0,0], 1, crop=False)
+    #blob = cv2.dnn.blobFromImage(input_image, 1/255.0, (640, 640), swapRB=True)
     # Sets the input to the network.
     net.setInput(blob)
 
@@ -104,9 +108,15 @@ def post_process(input_image, outputs):
         top = box[1]
         width = box[2]
         height = box[3]
+        license_plate = input_image[top:top+height, left:left+width]
+        # cv2.imshow("das", license_plate)
+        # cv2.waitKey(0)
+        # recognize characters from the license plate image
+        characters = recognize_characters(license_plate)
+        cv2.putText(input_image, characters, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         cv2.rectangle(input_image, (left, top), (left + width, top + height), BLUE, 3*THICKNESS)
-        label = "{}:{:.2f}".format(classes[class_ids[i]], confidences[i])
-        draw_label(input_image, label, left, top)
+        # label = "{}:{:.2f}".format(classes[class_ids[i]], confidences[i])
+        #draw_label(input_image, label, left, top)
     return input_image
 
 def load_capture(source=0):
@@ -115,12 +125,37 @@ def load_capture(source=0):
 
 capture=load_capture("ocr.jpg")
 
-classesFile = "config/coco_classes.txt"
+classesFile = "config\lp_v2.txt"
 classes = None
 with open(classesFile, 'rt') as f:
     classes = f.read().rstrip('\n').split('\n')
-modelWeights = "weights/yolov5n.onnx"
+modelWeights = "weights\lp_v2.onnx"
 net = cv2.dnn.readNet(modelWeights)
+
+# net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+# net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
+def ocr_pre_process(image):
+    # resize image to a fixed size
+    #image = cv2.resize(image, (INPUT_HEIGHT, INPUT_WIDTH))
+
+    # convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # apply adaptive thresholding to the image
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+    
+    return thresh
+
+def recognize_characters(image):
+    # preprocess the image
+    # preprocessed = ocr_pre_process(image)
+    
+    # recognize characters using OCR reader
+    result = reader.readtext(image, detail=0)
+        
+    return str(result)
+
 
 while True:
 
@@ -134,12 +169,9 @@ while True:
     # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
     t, _ = net.getPerfProfile()
     label = 'FPS: %.2f' % (1000/(t * 1000.0 / cv2.getTickFrequency()))
-    reader = easyocr.Reader(['en'], gpu=True)
-    result = reader.readtext("ocr.jpg", detail=0)
-    print(result)
     cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE, RED, THICKNESS, cv2.LINE_AA)
     cv2.imshow('Output', img)
-    cv2.waitKey(5)
+    cv2.waitKey(0)
 
     # ESC for break
     if cv2.waitKey(1) > -1:
