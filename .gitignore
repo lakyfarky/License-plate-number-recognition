@@ -109,7 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-yolov5_ocr/
+
 
 # Spyder project settings
 .spyderproject
@@ -133,3 +133,4 @@ dmypy.json
 weights/
 config/
 yolov5.sh
+yolov5_ocr/
