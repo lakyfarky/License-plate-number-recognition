@@ -7,4 +7,12 @@ First download PyTorch
 ```
 pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
 ```
-Then install requirements
+Then install requirements and set parameters 
+```py
+yolo = Yolov5("weights_path.onnx", "classes_path.txt", "vid_example_path.mp4")
+```
+and run 
+```
+python main.py
+```
+
