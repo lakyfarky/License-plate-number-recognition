@@ -3,6 +3,8 @@ License plate recognition with YOLOv5 object detection algorithm and EasyOCR
 
 This is simple python project for license plate detection and number recognition. 
  ![](164_GIF.gif) / ! [](164_GIF.gif)
+
+ 
 First clone GitHub repository and download PyTorch 
 ```
 git clone https://github.com/lakyfarky/License-plate-recognition.git
