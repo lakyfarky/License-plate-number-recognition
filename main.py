@@ -140,10 +140,11 @@ class Yolov5:
         
         # recognize characters using OCR reader
         result = self.reader.readtext(image, detail=0)
-            
-        return str(result)
+        license_plate = " ".join(i for i in result)
+        print(license_plate)
+        return license_plate
 
-yolo = Yolov5("weights\lp_v2.onnx", "config\lp_v2.txt", "data/Number Plate detection on Recorded Video.mp4")
+yolo = Yolov5("weights\lp_v2.onnx", "config\lp_v2.txt", r"C:\Users\Luka\Desktop\BDDA\training\camera_videos\164.mp4")
 
 frame = 0
 # Obtain frame size information using get() method
@@ -153,7 +154,7 @@ frame_size = (frame_width,frame_height)
 fps = 20
 
 # Initialize video writer object
-output = cv2.VideoWriter('data/output_video_from_file.avi', cv2.VideoWriter_fourcc(*'MJPG'), 20, frame_size)
+output = cv2.VideoWriter(f'data/164.avi', cv2.VideoWriter_fourcc(*'MJPG'), 20, frame_size)
 while True:
     frame+=1
     _, frame = yolo.capture.read()
@@ -170,7 +171,7 @@ while True:
     t, _ = yolo.net.getPerfProfile()
     label = 'FPS: %.2f' % (1000/(t * 1000.0 / cv2.getTickFrequency()))
     
-    cv2.putText(img, label, (20, 40), yolo.FONT_FACE, yolo.FONT_SCALE, yolo.RED, yolo.THICKNESS, cv2.LINE_AA)
+    #cv2.putText(img, label, (20, 40), yolo.FONT_FACE, yolo.FONT_SCALE, yolo.RED, yolo.THICKNESS, cv2.LINE_AA)
     output.write(img)
     cv2.imshow('Output', img)
     cv2.waitKey(5)
