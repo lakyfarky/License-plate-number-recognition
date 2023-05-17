@@ -5,11 +5,12 @@ This is simple python project for license plate detection and number recognition
 
  ![](164_GIF.gif) 
  
-Create python virtual enviroment (install if necessary)
+Create and activate python virtual enviroment (install if necessary)
 
-```{python}
+```{console}
 pip install virtualenv
 python -m venv venv_name
+source venv_name/Scripts/activate
 ```
 Clone GitHub repository and download PyTorch 
 ```
