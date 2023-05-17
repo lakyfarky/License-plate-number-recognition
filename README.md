@@ -5,12 +5,19 @@ This is simple python project for license plate detection and number recognition
 
  ![](164_GIF.gif) 
  
-First clone GitHub repository and download PyTorch 
+Create python virtual enviroment (install if necessary)
+*py
+```
+pip install virtualenv
+python -m venv venv_name
+source venv_name/Scripts/activate
+```
+Clone GitHub repository and download PyTorch 
 ```
 git clone https://github.com/lakyfarky/License-plate-recognition.git
 pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
 ```
-Then install requirements and set parameters 
+Install requirements and set parameters 
 ```
 pip install requirements.txt
 ```
